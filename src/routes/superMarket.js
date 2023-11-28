@@ -3,18 +3,53 @@ const router = Router();
 
 const superMarkets = [
     {
-        name: 'Robinsons'
+        id: 1,
+        name: 'Robinsons',
+        rating: 1.5,
+        department: 'store',
     },
     {
-        name: 'Everwin'
+        id: 2,
+        name: 'Everwin',
+        rating: 2,
+        department: 'store',
     },
     {
-        name: 'New Star'
+        id: 3,
+        name: 'New Star',
+        rating: 2.5,
+        department: 'store',
     },
 ];
 
+// Get method and Get Query
 router.get('/', (req, res) => {
-    res.send(superMarkets)
-})
+    const { rating } = req.query; // Get Query
+    if(rating !== undefined){
+        const filteredStores = superMarkets.filter((market) => market.rating == rating);
+        res.send(filteredStores);
+    }else{
+        res.send(superMarkets); // Get all Stores 
+    }
+});
+
+// GET method with Params
+router.get('/:name', (req, res) => {
+    const { name } = req.params;
+    const findStore = superMarkets.find((store) => store.name.toLowerCase() === name.toLowerCase());
+    res.send(findStore);
+});
+
+// Insert new Store
+router.post('/', (req, res) => {
+    const { id, name, rating, department} = req.body;
+    const newStore = {id, name, rating, department: department.toLowerCase()};
+    if(department.toLowerCase() !== "store"){
+        res.status(406).json({ message: "Invalid Department" });
+    }else{
+        superMarkets.push(newStore)
+        res.status(201).json({ message: "Successfully Added" });
+    }
+});
 
 module.exports = router;

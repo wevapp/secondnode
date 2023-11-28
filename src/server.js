@@ -1,4 +1,5 @@
 const express = require('express');
+const cookieParser = require('cookie-parser');
 const app = express();
 const PORT = 3000;
 
@@ -9,6 +10,7 @@ const marketsRoute = require('./routes/superMarket')
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended : true }));
+app.use(cookieParser());
 
 app.use((req, res, next) => {
   console.log(`${req.method}:${req.url}`); // Just Reminder
