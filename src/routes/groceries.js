@@ -29,12 +29,16 @@ router.get('/', (req, res) => {
         const filteredProducts = Products.filter((prod) => prod.id == id);
         res.send(filteredProducts);
     }else{
+        // Set Cookie
+        res.cookie('Visited', true, { maxAge : 60000,});
         res.send(Products); // Get all Products
     }
 });
 
 // GET method with Params
 router.get('/:item', (req, res) => {
+    // note install cookie parser
+    console.log(req.cookies);
     const { item } = req.params;
     const ProductsItem = Products.find((prodItem) => prodItem.item.toLowerCase() === item.toLowerCase());
     res.send(ProductsItem);
@@ -47,8 +51,31 @@ router.post('/',(req, res) => {
         res.status(406).json({ message: "Invalid Department" });
     }else{
         Products.push(newItem);
-        res.sendStatus(201)
+        res.sendStatus(201);
     }
 });
 
+// example for Session
+router.get('/shopping/cart', (req, res) => {
+    const { cart } = req.session;
+    if (!cart) {
+        res.send('You have no item');
+    } else {
+        res.send(cart);
+    }
+});
+
+router.post('/shopping/cart/item', (req, res) => {
+    const { id, item, quantity, department } = req.body;
+    const cartItem = { id, item, quantity, department };
+    const { cart } = req.session;
+    if (cart) {
+        req.session.cart.items.push(cartItem);
+    } else {
+        req.session.cart = {
+            items: [cartItem],
+        };
+    }
+    res.send(201);
+});
 module.exports = router;
