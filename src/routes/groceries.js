@@ -22,6 +22,12 @@ const Products = [
     },
 ]
 
+// check if the user is login
+router.use((req, res, next) => {
+    if (req.session.user) next();
+    else res.sendStatus(401);
+});
+
 // GET Method and Get query
 router.get('/', (req, res) => {
     const { id } = req.query;
@@ -30,7 +36,7 @@ router.get('/', (req, res) => {
         res.send(filteredProducts);
     }else{
         // Set Cookie
-        res.cookie('Visited', true, { maxAge : 60000,});
+        // res.cookie('Visited', true, { maxAge : 10000,});
         res.send(Products); // Get all Products
     }
 });
@@ -48,7 +54,7 @@ router.post('/',(req, res) => {
     const {id, item, quantity, department} = req.body;
     const newItem = { id, item, quantity, department: department.toLowerCase()};
     if(department.toLowerCase() !== "product"){
-        res.status(406).json({ message: "Invalid Department" });
+        res.sendStatus(406).json({ message: "Invalid Department" });
     }else{
         Products.push(newItem);
         res.sendStatus(201);
@@ -76,6 +82,6 @@ router.post('/shopping/cart/item', (req, res) => {
             items: [cartItem],
         };
     }
-    res.send(201);
+    res.sendStatus(201);
 });
 module.exports = router;

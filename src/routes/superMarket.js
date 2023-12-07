@@ -1,6 +1,12 @@
 const { Router } = require('express');
 const router = Router();
 
+// check if the user is login
+router.use((req, res, next) => {
+    if (req.session.user) next();
+    else res.sendStatus(401);
+});
+
 const superMarkets = [
     {
         id: 1,
@@ -45,10 +51,10 @@ router.post('/', (req, res) => {
     const { id, name, rating, department} = req.body;
     const newStore = {id, name, rating, department: department.toLowerCase()};
     if(department.toLowerCase() !== "store"){
-        res.status(406).json({ message: "Invalid Department" });
+        res.sendStatus(406).json({ message: "Invalid Department" });
     }else{
         superMarkets.push(newStore)
-        res.status(201).json({ message: "Successfully Added" });
+        res.sendStatus(201).json({ message: "Successfully Added" });
     }
 });
 
